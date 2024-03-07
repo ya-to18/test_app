@@ -69,4 +69,6 @@ group :test do
   gem "selenium-webdriver"
 end
 
+gem 'pry-rails'
+
 gem 'meta-tags', :require => 'meta_tags'

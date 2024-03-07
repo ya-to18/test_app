@@ -12,7 +12,7 @@ class TodosController < ApplicationController
 
   # GET /todos/new
   def new
-    @todo = Todo.new
+    @todo_form = TodoForm.new
   end
 
   # GET /todos/1/edit
@@ -21,7 +21,8 @@ class TodosController < ApplicationController
 
   # POST /todos or /todos.json
   def create
-    @todo = Todo.new(todo_params)
+    binding.pry
+    @todo_form = TodoForm.new(todo_params)
 
     respond_to do |format|
       if @todo.save
@@ -65,6 +66,6 @@ class TodosController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def todo_params
-      params.require(:todo).permit(:name, :limit)
+      params.require(:todo_form).permit(:name, :limit, tasks_attributes: [:title, :content])
     end
 end

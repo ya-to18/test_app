@@ -1,52 +1,48 @@
 class TodoForm
   include ActiveModel::Model
-  include Virtus.model
+  include ActiveModel::Attributes
 
-  attribute :name, String
-  attribute :limit, Date
-  # attribute :title, :string
-  # attribute :content, :string
-  attr_accessor :tasks
+  attribute :id, :integer
+  attribute :name, :string
+  attribute :limit, :date
+  attribute :title, :string
+  attribute :content, :string
+  attribute :tasks_attributes, array: true, default: []
 
-  # validates :title, presence: true
-  # validates :content, presence: true
   validates :name, presence: true
   validates :limit, presence: true
   validates :tasks_attributes, presence: true
 
-  def initialize(todo = Todo.new)
-    @todo = todo
-    self.attributes = @todo.attributes if @todo.persisted?
+  def initialize(attributes = {}, todo: nil)
+  attributes[:id] = todo.id if todo.present?
+  if todo.present?
+    attributes[:name] = todo.name
+    attributes[:limit] = todo.limit
+    attributes[:tasks_attributes] = todo.tasks.map { |task| { title: task.title, content: task.content } }
   end
 
-  def assign_attributes(params = {})
-    @params = params
-    tasks_attributes = params[:tasks_attributes]
+  super(attributes)
 
-    @tasks ||= []
-    tasks_attributes&.map do |tasks_attributes|
-      task = Task.new(tasks_attributes)
-      @tasks.push(task)
-    end
-
-    @params.delete(:tasks_attributes)
-    @todo.assign_attributes(@params) if @todo.persisted?
-
-    super(@params)
-    binding.pry
+  @tasks = (attributes[:tasks_attributes] || []).map do |task_attributes|
+    TodoForm.new(task_attributes)
   end
+end
+
+def tasks_attributes=(attributes)
+  @tasks = attributes.map { |task_attributes| TodoForm.new(task_attributes) }
+end
+
+def tasks
+  @tasks
+end
 
   def save
-    binding.pry
-    # return false if invalid?
-
-    if @todo.persisted?
-      @todo.tasks = tasks if tasks.present?
-      @todo.save!
-    else
-      todo = Todo.new(name: name, limit: limit)
-      todo.tasks = tasks if tasks.present?
-      todo.save!
+    return false if invalid?
+    ActiveRecord::Base.transaction do
+      todo = Todo.create!(name: name, limit: limit)
+      tasks_attributes.map do |task_attributes|
+        todo.tasks.create!(task_attributes)
+      end
     end
   end
 end

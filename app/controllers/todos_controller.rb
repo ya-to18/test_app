@@ -12,20 +12,20 @@ class TodosController < ApplicationController
 
   # GET /todos/new
   def new
-    @todo = TodoForm.new
+    @form = TodoForm.new
   end
 
   # GET /todos/1/edit
   def edit
-    @todo = TodoForm.new(@todo)
+    @form = TodoForm.new(todo: @todo)
   end
 
   # POST /todos or /todos.json
   def create
-    @todo = TodoForm.new
-    @todo.assign_attributes(todo_params)
+    @form = TodoForm.new(todo_params)
+    # @form.assign_attributes(todo_params)
 
-    if @todo.save
+    if @form.save
       redirect_to todos_path, notice: "Todo was successfully created."
     else
       puts "保存できなかった"
@@ -35,8 +35,8 @@ class TodosController < ApplicationController
 
   # PATCH/PUT /todos/1 or /todos/1.json
   def update
-    @todo = TodoForm.new(@todo)
-    @todo.assign_attributes(todo_params)
+    @form = TodoForm.new(todo: @todo)
+    @form.assign_attributes(todo_params)
 
     if @todo.save
       redirect_to todo_url(@todo), notice: "Todo was successfully updated."

@@ -72,3 +72,4 @@ end
 gem 'pry-rails'
 
 gem 'meta-tags', :require => 'meta_tags'
+gem 'virtus'

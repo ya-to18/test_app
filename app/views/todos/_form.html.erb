@@ -1,10 +1,9 @@
-<%= form_with model: @todo_form, url: todos_path, class: "contents" do |form| %>
-  <% if @todo_form.errors.any? %>
+<%= form_with model: @todo, url: url, method: method, class: "contents" do |form| %>
+  <% if @todo.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
-      <h2><%= pluralize(@todo_form.errors.count, "error") %> prohibited this todo from being saved:</h2>
-
+      <h2><%= pluralize(@todo.errors.count, "error") %> prohibited this todo from being saved:</h2>
       <ul>
-        <% @todo_form.errors.each do |error| %>
+        <% @todo.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
       </ul>
@@ -21,25 +20,14 @@
     <%= form.date_field :limit, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
-  <%= form.fields_for :tasks_attributes, Task.new do |task_form| %>
+  <%= form.fields_for :tasks do |task_form| %>
     <div>
       <%= task_form.label :title %>
-      <%= task_form.text_field :title, id: 'new_tasks', class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+      <%= task_form.text_field :title, name: "todo_form[tasks_attributes][][title]", class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
     </div>
-
     <div>
       <%= task_form.label :content %>
-      <%= task_form.text_field :content, id: 'new_tasks', class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-    </div>
-
-    <div>
-      <%= task_form.label :title %>
-      <%= task_form.text_field :title, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-    </div>
-
-    <div>
-      <%= task_form.label :content %>
-      <%= task_form.text_field :content, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+      <%= task_form.text_field :content, name: "todo_form[tasks_attributes][][content]", class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
     </div>
   <% end %>
 

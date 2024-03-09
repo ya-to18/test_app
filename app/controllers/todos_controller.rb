@@ -12,39 +12,36 @@ class TodosController < ApplicationController
 
   # GET /todos/new
   def new
-    @todo_form = TodoForm.new
+    @todo = TodoForm.new
   end
 
   # GET /todos/1/edit
   def edit
+    @todo = TodoForm.new(@todo)
   end
 
   # POST /todos or /todos.json
   def create
-    binding.pry
-    @todo_form = TodoForm.new(todo_params)
+    @todo = TodoForm.new
+    @todo.assign_attributes(todo_params)
 
-    respond_to do |format|
-      if @todo.save
-        format.html { redirect_to todo_url(@todo), notice: "Todo was successfully created." }
-        format.json { render :show, status: :created, location: @todo }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @todo.errors, status: :unprocessable_entity }
-      end
+    if @todo.save
+      redirect_to todos_path, notice: "Todo was successfully created."
+    else
+      puts "保存できなかった"
+      render :new, status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /todos/1 or /todos/1.json
   def update
-    respond_to do |format|
-      if @todo.update(todo_params)
-        format.html { redirect_to todo_url(@todo), notice: "Todo was successfully updated." }
-        format.json { render :show, status: :ok, location: @todo }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @todo.errors, status: :unprocessable_entity }
-      end
+    @todo = TodoForm.new(@todo)
+    @todo.assign_attributes(todo_params)
+
+    if @todo.save
+      redirect_to todo_url(@todo), notice: "Todo was successfully updated."
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
